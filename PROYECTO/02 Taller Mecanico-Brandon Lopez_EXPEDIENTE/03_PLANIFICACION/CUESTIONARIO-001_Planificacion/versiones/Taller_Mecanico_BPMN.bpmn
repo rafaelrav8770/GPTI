@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL"
+  xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI"
+  xmlns:dc="http://www.omg.org/spec/DD/20100524/DC"
+  xmlns:di="http://www.omg.org/spec/DD/20100524/DI"
+  id="Definitions_TallerMecanico"
+  targetNamespace="http://bpmn.io/schema/bpmn">
+
+  <bpmn:process id="Process_TallerMecanico" name="Proceso de Taller Mecánico" isExecutable="false">
+
+    <bpmn:laneSet id="LaneSet_Taller">
+      <bpmn:lane id="Lane_Recepcionista" name="Recepcionista">
+        <bpmn:flowNodeRef>StartEvent_1</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Task_Recepcion</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Task_Registro</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Gateway_Servicio</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Task_CambioAceite</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Task_Frenos</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Task_Motor</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Task_Asignacion</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Gateway_Espera</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Task_Entregar</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Task_InformarHora</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Task_RegistroSalida</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>EndEvent_1</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="Lane_Mecanico" name="Mecánico">
+        <bpmn:flowNodeRef>Task_Servicio</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="Lane_Supervisor" name="Supervisor">
+        <bpmn:flowNodeRef>Task_Supervision</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Gateway_Listo</bpmn:flowNodeRef>
+      </bpmn:lane>
+    </bpmn:laneSet>
+
+    <bpmn:startEvent id="StartEvent_1" name="Inicio"/>
+    <bpmn:task id="Task_Recepcion" name="Recibir cliente y vehículo"/>
+    <bpmn:task id="Task_Registro" name="Registrar datos del cliente y vehículo"/>
+    <bpmn:exclusiveGateway id="Gateway_Servicio" name="Seleccionar servicio"/>
+    <bpmn:task id="Task_CambioAceite" name="Cambio de aceite"/>
+    <bpmn:task id="Task_Frenos" name="Servicio de frenos"/>
+    <bpmn:task id="Task_Motor" name="Trabajo de motor"/>
+    <bpmn:task id="Task_Asignacion" name="Asignar 1 de 3 mecánicos"/>
+    <bpmn:task id="Task_Servicio" name="Realizar servicio mecánico"/>
+    <bpmn:task id="Task_Supervision" name="Revisar y supervisar trabajo"/>
+    <bpmn:exclusiveGateway id="Gateway_Listo" name="¿Vehículo listo?"/>
+    <bpmn:exclusiveGateway id="Gateway_Espera" name="¿El cliente espera?"/>
+    <bpmn:task id="Task_Entregar" name="Entregar vehículo al cliente"/>
+    <bpmn:task id="Task_InformarHora" name="Informar hora para recoger vehículo"/>
+    <bpmn:task id="Task_RegistroSalida" name="Registrar salida y entrega"/>
+    <bpmn:endEvent id="EndEvent_1" name="Fin"/>
+
+    <bpmn:sequenceFlow id="Flow_1" sourceRef="StartEvent_1" targetRef="Task_Recepcion"/>
+    <bpmn:sequenceFlow id="Flow_2" sourceRef="Task_Recepcion" targetRef="Task_Registro"/>
+    <bpmn:sequenceFlow id="Flow_3" sourceRef="Task_Registro" targetRef="Gateway_Servicio"/>
+    <bpmn:sequenceFlow id="Flow_4" name="Cambio de aceite" sourceRef="Gateway_Servicio" targetRef="Task_CambioAceite"/>
+    <bpmn:sequenceFlow id="Flow_5" name="Frenos" sourceRef="Gateway_Servicio" targetRef="Task_Frenos"/>
+    <bpmn:sequenceFlow id="Flow_6" name="Trabajo de motor" sourceRef="Gateway_Servicio" targetRef="Task_Motor"/>
+    <bpmn:sequenceFlow id="Flow_7" sourceRef="Task_CambioAceite" targetRef="Task_Asignacion"/>
+    <bpmn:sequenceFlow id="Flow_8" sourceRef="Task_Frenos" targetRef="Task_Asignacion"/>
+    <bpmn:sequenceFlow id="Flow_9" sourceRef="Task_Motor" targetRef="Task_Asignacion"/>
+    <bpmn:sequenceFlow id="Flow_10" sourceRef="Task_Asignacion" targetRef="Task_Servicio"/>
+    <bpmn:sequenceFlow id="Flow_11" sourceRef="Task_Servicio" targetRef="Task_Supervision"/>
+    <bpmn:sequenceFlow id="Flow_12" sourceRef="Task_Supervision" targetRef="Gateway_Listo"/>
+    <bpmn:sequenceFlow id="Flow_13" name="No" sourceRef="Gateway_Listo" targetRef="Task_Servicio"/>
+    <bpmn:sequenceFlow id="Flow_14" name="Sí" sourceRef="Gateway_Listo" targetRef="Gateway_Espera"/>
+    <bpmn:sequenceFlow id="Flow_15" name="Sí" sourceRef="Gateway_Espera" targetRef="Task_Entregar"/>
+    <bpmn:sequenceFlow id="Flow_16" name="No" sourceRef="Gateway_Espera" targetRef="Task_InformarHora"/>
+    <bpmn:sequenceFlow id="Flow_17" sourceRef="Task_InformarHora" targetRef="Task_Entregar"/>
+    <bpmn:sequenceFlow id="Flow_18" sourceRef="Task_Entregar" targetRef="Task_RegistroSalida"/>
+    <bpmn:sequenceFlow id="Flow_19" sourceRef="Task_RegistroSalida" targetRef="EndEvent_1"/>
+  </bpmn:process>
+
+  <bpmndi:BPMNDiagram id="BPMNDiagram_Taller">
+    <bpmndi:BPMNPlane id="BPMNPlane_Taller" bpmnElement="Process_TallerMecanico">
+
+      <bpmndi:BPMNShape id="Lane_Recepcionista_di" bpmnElement="Lane_Recepcionista" isHorizontal="true">
+        <dc:Bounds x="80" y="80" width="1780" height="250"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Lane_Mecanico_di" bpmnElement="Lane_Mecanico" isHorizontal="true">
+        <dc:Bounds x="80" y="330" width="1780" height="170"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Lane_Supervisor_di" bpmnElement="Lane_Supervisor" isHorizontal="true">
+        <dc:Bounds x="80" y="500" width="1780" height="170"/>
+      </bpmndi:BPMNShape>
+
+      <bpmndi:BPMNShape id="StartEvent_1_di" bpmnElement="StartEvent_1">
+        <dc:Bounds x="130" y="185" width="36" height="36"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_Recepcion_di" bpmnElement="Task_Recepcion">
+        <dc:Bounds x="210" y="165" width="130" height="80"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_Registro_di" bpmnElement="Task_Registro">
+        <dc:Bounds x="390" y="165" width="145" height="80"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_Servicio_di" bpmnElement="Gateway_Servicio" isMarkerVisible="true">
+        <dc:Bounds x="585" y="180" width="50" height="50"/>
+      </bpmndi:BPMNShape>
+
+      <bpmndi:BPMNShape id="Task_CambioAceite_di" bpmnElement="Task_CambioAceite">
+        <dc:Bounds x="690" y="100" width="135" height="65"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_Frenos_di" bpmnElement="Task_Frenos">
+        <dc:Bounds x="690" y="175" width="135" height="65"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_Motor_di" bpmnElement="Task_Motor">
+        <dc:Bounds x="690" y="250" width="135" height="65"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_Asignacion_di" bpmnElement="Task_Asignacion">
+        <dc:Bounds x="875" y="165" width="145" height="80"/>
+      </bpmndi:BPMNShape>
+
+      <bpmndi:BPMNShape id="Task_Servicio_di" bpmnElement="Task_Servicio">
+        <dc:Bounds x="1050" y="375" width="160" height="80"/>
+      </bpmndi:BPMNShape>
+
+      <bpmndi:BPMNShape id="Task_Supervision_di" bpmnElement="Task_Supervision">
+        <dc:Bounds x="1240" y="545" width="160" height="80"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_Listo_di" bpmnElement="Gateway_Listo" isMarkerVisible="true">
+        <dc:Bounds x="1450" y="560" width="50" height="50"/>
+      </bpmndi:BPMNShape>
+
+      <bpmndi:BPMNShape id="Gateway_Espera_di" bpmnElement="Gateway_Espera" isMarkerVisible="true">
+        <dc:Bounds x="1540" y="180" width="50" height="50"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_Entregar_di" bpmnElement="Task_Entregar">
+        <dc:Bounds x="1620" y="115" width="140" height="65"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_InformarHora_di" bpmnElement="Task_InformarHora">
+        <dc:Bounds x="1620" y="205" width="140" height="65"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_RegistroSalida_di" bpmnElement="Task_RegistroSalida">
+        <dc:Bounds x="1780" y="165" width="140" height="80"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_1_di" bpmnElement="EndEvent_1">
+        <dc:Bounds x="1950" y="187" width="36" height="36"/>
+      </bpmndi:BPMNShape>
+
+      <!-- Edges -->
+      <bpmndi:BPMNEdge id="Flow_1_di" bpmnElement="Flow_1"><di:waypoint x="166" y="203"/><di:waypoint x="210" y="205"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_2_di" bpmnElement="Flow_2"><di:waypoint x="340" y="205"/><di:waypoint x="390" y="205"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_3_di" bpmnElement="Flow_3"><di:waypoint x="535" y="205"/><di:waypoint x="585" y="205"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_4_di" bpmnElement="Flow_4"><di:waypoint x="610" y="180"/><di:waypoint x="610" y="132"/><di:waypoint x="690" y="132"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_5_di" bpmnElement="Flow_5"><di:waypoint x="635" y="205"/><di:waypoint x="690" y="207"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_6_di" bpmnElement="Flow_6"><di:waypoint x="610" y="230"/><di:waypoint x="610" y="282"/><di:waypoint x="690" y="282"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_7_di" bpmnElement="Flow_7"><di:waypoint x="825" y="132"/><di:waypoint x="850" y="132"/><di:waypoint x="850" y="205"/><di:waypoint x="875" y="205"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_8_di" bpmnElement="Flow_8"><di:waypoint x="825" y="207"/><di:waypoint x="875" y="205"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_9_di" bpmnElement="Flow_9"><di:waypoint x="825" y="282"/><di:waypoint x="850" y="282"/><di:waypoint x="850" y="205"/><di:waypoint x="875" y="205"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_10_di" bpmnElement="Flow_10"><di:waypoint x="1020" y="205"/><di:waypoint x="1050" y="205"/><di:waypoint x="1050" y="415"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_11_di" bpmnElement="Flow_11"><di:waypoint x="1210" y="415"/><di:waypoint x="1240" y="415"/><di:waypoint x="1240" y="585"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_12_di" bpmnElement="Flow_12"><di:waypoint x="1400" y="585"/><di:waypoint x="1450" y="585"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_13_di" bpmnElement="Flow_13"><di:waypoint x="1475" y="610"/><di:waypoint x="1475" y="650"/><di:waypoint x="1130" y="650"/><di:waypoint x="1130" y="455"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_14_di" bpmnElement="Flow_14"><di:waypoint x="1500" y="585"/><di:waypoint x="1565" y="585"/><di:waypoint x="1565" y="230"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_15_di" bpmnElement="Flow_15"><di:waypoint x="1565" y="180"/><di:waypoint x="1565" y="147"/><di:waypoint x="1620" y="147"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_16_di" bpmnElement="Flow_16"><di:waypoint x="1565" y="230"/><di:waypoint x="1565" y="237"/><di:waypoint x="1620" y="237"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_17_di" bpmnElement="Flow_17"><di:waypoint x="1760" y="237"/><di:waypoint x="1770" y="237"/><di:waypoint x="1770" y="147"/><di:waypoint x="1620" y="147"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_18_di" bpmnElement="Flow_18"><di:waypoint x="1760" y="147"/><di:waypoint x="1780" y="205"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_19_di" bpmnElement="Flow_19"><di:waypoint x="1920" y="205"/><di:waypoint x="1950" y="205"/></bpmndi:BPMNEdge>
+
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
